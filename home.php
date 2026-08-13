@@ -75,6 +75,11 @@
       <div class="jumbotron text-center">
          <h1>Welcome User <hr> Inventory Management System</h1>
          <p>Browse around to find out the pages that you can access!</p>
+         <div style="margin-top:20px;">
+           <a href="import_excel.php" class="btn btn-info btn-lg">
+             <span class="glyphicon glyphicon-upload"></span> Upload Excel Inventory
+           </a>
+         </div>
       </div>
     </div>
  </div>

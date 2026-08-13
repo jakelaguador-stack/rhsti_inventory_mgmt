@@ -30,6 +30,7 @@
     <ul class="nav submenu">
        <li><a href="product_list.php">Items List</a> </li>
        <li><a href="add_product.php">Add Items</a> </li>
+       <li><a href="import_excel.php">Upload Excel Inventory</a> </li>
 
        <li class="submenu-product-list" style="padding:8px 12px;">
          <div style="max-height:220px; overflow:auto; font-size:13px;">

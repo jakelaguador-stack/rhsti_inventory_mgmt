@@ -54,6 +54,12 @@
                   <span class="glyphicon glyphicon-plus"></span> Add Item
                 </a>
               </div>
+              <div style="min-width:180px;">
+                <label style="display:block; visibility:hidden; height:1px;">&nbsp;</label>
+                <a href="import_excel.php" class="btn btn-info btn-block" style="white-space:nowrap;">
+                  <span class="glyphicon glyphicon-upload"></span> Upload Excel
+                </a>
+              </div>
             </div>
           </div>
           <div class="table-responsive">
