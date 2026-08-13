@@ -5,9 +5,17 @@
   
   global $db;
   $products = array();
+  $has_serial = function_exists('columnExists') && columnExists('products', 'serial_number');
+  $has_receipt = function_exists('columnExists') && columnExists('products', 'receipt_number');
   
-  $sql = "SELECT p.id, p.name, p.quantity, p.used, p.unit, p.buy_price, p.media_id, p.date, c.name AS categorie_name, m.file_name AS image, p.remarks ";
-  $sql .= "FROM products p ";
+  $sql = "SELECT p.id, p.name, p.quantity, p.used, p.unit, p.buy_price, p.media_id, p.date, c.name AS categorie_name, m.file_name AS image, p.remarks";
+  if ($has_serial) {
+      $sql .= ", p.serial_number";
+  }
+  if ($has_receipt) {
+      $sql .= ", p.receipt_number";
+  }
+  $sql .= " FROM products p ";
   $sql .= "LEFT JOIN categories c ON c.id = p.categorie_id ";
   $sql .= "LEFT JOIN media m ON m.id = p.media_id ";
   $sql .= "ORDER BY p.id ASC";
@@ -56,6 +64,19 @@
       $content .= "BT\n/{$font} {$size} Tf\n{$text_x} " . ($y + ($height / 3)) . " Td\n(" . pdf_escape($text) . ") Tj\nET\n";
   }
 
+  function pdf_draw_cell_centered(&$content, $x, $y, $width, $height, $text, $font = 'F1', $size = 7, $bg = null) {
+      if ($bg) {
+          $content .= "{$bg} rg\n{$x} {$y} {$width} {$height} re f\n";
+      }
+      $content .= "0.5 0.5 0.5 RG\n{$x} {$y} {$width} {$height} re S\n0 0 0 rg\n";
+
+      $text = (string)$text;
+      $text_width = strlen($text) * ($size * 0.5);
+      $text_x = $x + (($width - $text_width) / 2);
+
+      $content .= "BT\n/{$font} {$size} Tf\n{$text_x} " . ($y + ($height / 3)) . " Td\n(" . pdf_escape($text) . ") Tj\nET\n";
+  }
+
   $logo_path = __DIR__ . '/uploads/images/logo.jpg';
   $logo_data = '';
   $logo_width = 0;
@@ -98,20 +119,29 @@
   $row_y = 660;
   $row_h = 20;
   $cols = [
-      ['t' => 'DATE', 'w' => 50],
-      ['t' => 'DESCRIPTION', 'w' => 140],
-      ['t' => 'QTY', 'w' => 30],
-      ['t' => 'UNIT', 'w' => 30],
-      ['t' => 'UNIT COST', 'w' => 60],
-      ['t' => 'TOTAL COST', 'w' => 60],
-      ['t' => 'CATEGORY', 'w' => 80],
-      ['t' => 'REMARKS', 'w' => 80]
+      ['t' => 'DATE', 'w' => 42],
+      ['t' => 'DESCRIPTION', 'w' => 100],
+      ['t' => 'QTY', 'w' => 24],
+      ['t' => 'UNIT', 'w' => 26],
+      ['t' => 'UNIT COST', 'w' => 46],
+      ['t' => 'TOTAL', 'w' => 46],
+      ['t' => 'CATEGORY', 'w' => 55],
   ];
+  if ($has_serial) {
+      $cols[] = ['t' => 'SERIAL', 'w' => 55];
+  }
+  if ($has_receipt) {
+      $cols[] = ['t' => 'RECEIPT', 'w' => 55];
+  }
+  $cols[] = ['t' => 'REMARKS', 'w' => 55];
+
+  $table_total_width = array_sum(array_column($cols, 'w'));
+  $table_x = max(20, (612 - $table_total_width) / 2);
 
   $content = $header_content;
-  $cur_x = 20;
+  $cur_x = $table_x;
   foreach ($cols as $c) {
-      pdf_draw_cell($content, $cur_x, $row_y, $c['w'], $row_h, $c['t'], 'F2', 7, 'center', '0.85 0.85 0.85');
+      pdf_draw_cell_centered($content, $cur_x, $row_y, $c['w'], $row_h, $c['t'], 'F2', 7, '0.85 0.85 0.85');
       $cur_x += $c['w'];
   }
   $row_y -= $row_h;
@@ -121,9 +151,9 @@
           $pages_contents[] = $content;
           $content = $header_content;
           $row_y = 660;
-          $cur_x = 20;
+          $cur_x = $table_x;
           foreach ($cols as $c) {
-              pdf_draw_cell($content, $cur_x, $row_y, $c['w'], $row_h, $c['t'], 'F2', 7, 'center', '0.85 0.85 0.85');
+              pdf_draw_cell_centered($content, $cur_x, $row_y, $c['w'], $row_h, $c['t'], 'F2', 7, '0.85 0.85 0.85');
               $cur_x += $c['w'];
           }
           $row_y -= $row_h;
@@ -135,18 +165,24 @@
 
       $row_data = [
           $short_date,
-          pdf_fit_text($p['name'], 140),
+          pdf_fit_text($p['name'], 100),
           $p['quantity'],
           $p['unit'] ?? '-',
           number_format($p['buy_price'], 2),
           number_format($total, 2),
-          pdf_fit_text($cat_name, 80),
-          pdf_fit_text(!empty($p['remarks']) ? $p['remarks'] : '', 80)
+          pdf_fit_text($cat_name, 55),
       ];
+      if ($has_serial) {
+          $row_data[] = pdf_fit_text($p['serial_number'] ?? '', 55);
+      }
+      if ($has_receipt) {
+          $row_data[] = pdf_fit_text($p['receipt_number'] ?? '', 55);
+      }
+      $row_data[] = pdf_fit_text(!empty($p['remarks']) ? $p['remarks'] : '', 55);
 
-      $cur_x = 20;
+      $cur_x = $table_x;
       foreach ($row_data as $i => $val) {
-          pdf_draw_cell($content, $cur_x, $row_y, $cols[$i]['w'], $row_h, (string)$val, 'F1', 7, 'center');
+          pdf_draw_cell_centered($content, $cur_x, $row_y, $cols[$i]['w'], $row_h, (string)$val, 'F1', 7);
           $cur_x += $cols[$i]['w'];
       }
       $row_y -= $row_h;

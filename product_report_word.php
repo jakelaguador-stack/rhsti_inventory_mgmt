@@ -11,8 +11,17 @@
   
   // Always fetch products with category information using proper SQL query
   global $db;
-  $sql = "SELECT p.id, p.name, p.quantity, p.used, p.unit, p.buy_price, p.media_id, p.date, c.name AS categorie, m.file_name AS image, p.remarks ";
-  $sql .= "FROM products p ";
+  $has_serial = function_exists('columnExists') && columnExists('products', 'serial_number');
+  $has_receipt = function_exists('columnExists') && columnExists('products', 'receipt_number');
+
+  $sql = "SELECT p.id, p.name, p.quantity, p.used, p.unit, p.buy_price, p.media_id, p.date, c.name AS categorie, m.file_name AS image, p.remarks";
+  if ($has_serial) {
+      $sql .= ", p.serial_number";
+  }
+  if ($has_receipt) {
+      $sql .= ", p.receipt_number";
+  }
+  $sql .= " FROM products p ";
   $sql .= "LEFT JOIN categories c ON c.id = p.categorie_id ";
   $sql .= "LEFT JOIN media m ON m.id = p.media_id ";
   $sql .= "ORDER BY p.id ASC";
@@ -94,8 +103,8 @@
      .institution-details { font-size: 9pt; font-style: italic; color: #333; margin: 2px 0; }
      .report-title { font-size: 13pt; font-weight: bold; text-align: center; margin-top: 15px; margin-bottom: 5px; text-transform: uppercase; }
      .report-sy { font-size: 11pt; font-weight: bold; text-align: center; margin-bottom: 25px; }
-     table.inventory-table { width: 100%; border-collapse: collapse; font-size: 10pt; }
-     table.inventory-table th, table.inventory-table td { border: 1px solid #4f81bd; padding: 6px 8px; vertical-align: middle; }
+     table.inventory-table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 10pt; word-wrap: break-word; overflow-wrap: anywhere; }
+     table.inventory-table th, table.inventory-table td { border: 1px solid #4f81bd; padding: 6px 8px; vertical-align: middle; white-space: normal; word-wrap: break-word; overflow-wrap: anywhere; }
      table.inventory-table th { background-color: #b4c6e7; color: #000000; font-weight: bold; text-align: center; font-size: 9.5pt; }
      .text-center { text-align: center; }
      .text-right { text-align: right; }
@@ -128,14 +137,16 @@
    <table class="inventory-table">
      <thead>
        <tr>
-         <th style="width: 12%;">DATE ACQUIRED</th>
-         <th style="width: 30%;">DESCRIPTION OF ITEM</th>
-         <th style="width: 7%;">QTY</th>
-         <th style="width: 8%;">UNIT</th>
-         <th style="width: 12%;">UNIT COST</th>
-         <th style="width: 13%;">TOTAL COST</th>
-         <th style="width: 18%;">CATEGORY</th>
-         <th style="width: 15%;">REMARKS</th>
+         <th style="width: 9%;">DATE</th>
+         <th style="width: 17%;">DESCRIPTION</th>
+         <th style="width: 5%;">QTY</th>
+         <th style="width: 6%;">UNIT</th>
+         <th style="width: 9%;">UNIT COST</th>
+         <th style="width: 9%;">TOTAL</th>
+         <th style="width: 10%;">CATEGORY</th>
+         <?php if ($has_serial): ?><th style="width: 9%;">SERIAL</th><?php endif; ?>
+         <?php if ($has_receipt): ?><th style="width: 9%;">RECEIPT</th><?php endif; ?>
+         <th style="width: 11%;">REMARKS</th>
        </tr>
      </thead>
      <tbody>
@@ -154,12 +165,14 @@
              <td class="text-right"><?php echo number_format($unit_cost, 2); ?></td>
              <td class="text-right"><?php echo number_format($total_cost, 2); ?></td>
              <td class="text-left"><?php echo htmlspecialchars(remove_junk($product['categorie'] ?? ''), ENT_QUOTES, 'UTF-8'); ?></td>
+             <?php if ($has_serial): ?><td class="text-left"><?php echo htmlspecialchars(remove_junk($product['serial_number'] ?? ''), ENT_QUOTES, 'UTF-8'); ?></td><?php endif; ?>
+             <?php if ($has_receipt): ?><td class="text-left"><?php echo htmlspecialchars(remove_junk($product['receipt_number'] ?? ''), ENT_QUOTES, 'UTF-8'); ?></td><?php endif; ?>
              <td class="text-left"><?php echo htmlspecialchars(remove_junk($product['remarks'] ?? ''), ENT_QUOTES, 'UTF-8'); ?></td>
            </tr>
          <?php endforeach; ?>
        <?php else: ?>
          <tr>
-           <td colspan="8" class="text-center" style="color: #999; padding: 20px;">No inventory items found.</td>
+           <td colspan="<?php echo 8 + ($has_serial ? 1 : 0) + ($has_receipt ? 1 : 0); ?>" class="text-center" style="color: #999; padding: 20px;">No inventory items found.</td>
          </tr>
        <?php endif; ?>
      </tbody>

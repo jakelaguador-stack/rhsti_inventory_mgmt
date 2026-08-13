@@ -240,14 +240,20 @@ if (!empty($products)) {
       box-shadow: none !important;
       background: transparent !important;
       padding: 0 !important;
-      margin: 0 auto !important; /* Gitna horizontally */
-      width: 95% !important; /* Binigyan ng kaunting space sa gilid para maging pantay ang pagka-sentro */
+      margin: 0 auto !important;
+      width: 96% !important;
+      display: block !important;
     }
     
     .card-header, .card-body, .table-responsive {
       padding: 0 !important;
       margin: 0 auto !important;
       width: 100% !important;
+      display: block !important;
+    }
+
+    .table-responsive {
+      text-align: center !important;
     }
     
     /* School Letterhead Alignment */
@@ -267,6 +273,7 @@ if (!empty($products)) {
       min-width: 100% !important;
       table-layout: fixed !important;
       margin: 0 auto !important;
+      display: table !important;
     }
     
     .table-modern thead th {

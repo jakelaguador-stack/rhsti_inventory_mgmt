@@ -252,10 +252,20 @@ document.addEventListener('DOMContentLoaded', function () {
                       </span>
                       <select class="form-control" name="product-unit">
                         <option value="">Select a unit</option>
+                        <option value="piece" <?php echo (!empty($product['unit']) && $product['unit'] === 'piece') ? 'selected' : ''; ?>>Piece</option>
                         <option value="pcs" <?php echo (!empty($product['unit']) && $product['unit'] === 'pcs') ? 'selected' : ''; ?>>Pieces (pcs)</option>
+                        <option value="pack" <?php echo (!empty($product['unit']) && $product['unit'] === 'pack') ? 'selected' : ''; ?>>Pack</option>
                         <option value="box" <?php echo (!empty($product['unit']) && $product['unit'] === 'box') ? 'selected' : ''; ?>>Box</option>
-                        <option value="kg" <?php echo (!empty($product['unit']) && $product['unit'] === 'kg') ? 'selected' : ''; ?>>Kilogram (kg)</option>
+                        <option value="bundle" <?php echo (!empty($product['unit']) && $product['unit'] === 'bundle') ? 'selected' : ''; ?>>Bundle</option>
+                        <option value="set" <?php echo (!empty($product['unit']) && $product['unit'] === 'set') ? 'selected' : ''; ?>>Set</option>
+                        <option value="kg" <?php echo (!empty($product['unit']) && $product['unit'] === 'kg') ? 'selected' : ''; ?>>Kilo (kg)</option>
+                        <option value="gallon" <?php echo (!empty($product['unit']) && $product['unit'] === 'gallon') ? 'selected' : ''; ?>>Gallon</option>
+                        <option value="liter" <?php echo (!empty($product['unit']) && $product['unit'] === 'liter') ? 'selected' : ''; ?>>Liter</option>
                         <option value="ltr" <?php echo (!empty($product['unit']) && $product['unit'] === 'ltr') ? 'selected' : ''; ?>>Liter (ltr)</option>
+                        <option value="plastic" <?php echo (!empty($product['unit']) && $product['unit'] === 'plastic') ? 'selected' : ''; ?>>Plastic</option>
+                        <option value="bottle" <?php echo (!empty($product['unit']) && $product['unit'] === 'bottle') ? 'selected' : ''; ?>>Bottle</option>
+                        <option value="sachet" <?php echo (!empty($product['unit']) && $product['unit'] === 'sachet') ? 'selected' : ''; ?>>Sachet</option>
+                        <option value="can" <?php echo (!empty($product['unit']) && $product['unit'] === 'can') ? 'selected' : ''; ?>>Can</option>
                       </select>
                     </div>
                   </div>

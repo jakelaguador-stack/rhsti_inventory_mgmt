@@ -221,8 +221,19 @@
                    <select id="product-unit" class="form-control" name="product-unit" required>
                      <option value="">Select Unit</option>
                      <option value="piece" <?php echo $prefill && $prefill['unit'] === 'piece' ? 'selected' : '' ?>>Piece</option>
+                     <option value="pcs" <?php echo $prefill && $prefill['unit'] === 'pcs' ? 'selected' : '' ?>>Pieces (pcs)</option>
                      <option value="pack" <?php echo $prefill && $prefill['unit'] === 'pack' ? 'selected' : '' ?>>Pack</option>
                      <option value="box" <?php echo $prefill && $prefill['unit'] === 'box' ? 'selected' : '' ?>>Box</option>
+                     <option value="bundle" <?php echo $prefill && $prefill['unit'] === 'bundle' ? 'selected' : '' ?>>Bundle</option>
+                     <option value="set" <?php echo $prefill && $prefill['unit'] === 'set' ? 'selected' : '' ?>>Set</option>
+                     <option value="kg" <?php echo $prefill && $prefill['unit'] === 'kg' ? 'selected' : '' ?>>Kilo (kg)</option>
+                     <option value="gallon" <?php echo $prefill && $prefill['unit'] === 'gallon' ? 'selected' : '' ?>>Gallon</option>
+                     <option value="liter" <?php echo $prefill && $prefill['unit'] === 'liter' ? 'selected' : '' ?>>Liter</option>
+                     <option value="ltr" <?php echo $prefill && $prefill['unit'] === 'ltr' ? 'selected' : '' ?>>Liter (ltr)</option>
+                     <option value="plastic" <?php echo $prefill && $prefill['unit'] === 'plastic' ? 'selected' : '' ?>>Plastic</option>
+                     <option value="bottle" <?php echo $prefill && $prefill['unit'] === 'bottle' ? 'selected' : '' ?>>Bottle</option>
+                     <option value="sachet" <?php echo $prefill && $prefill['unit'] === 'sachet' ? 'selected' : '' ?>>Sachet</option>
+                     <option value="can" <?php echo $prefill && $prefill['unit'] === 'can' ? 'selected' : '' ?>>Can</option>
                    </select>
                    <?php endif; ?>
                  </div>
